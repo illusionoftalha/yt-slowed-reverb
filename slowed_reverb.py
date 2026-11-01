@@ -106,6 +106,9 @@ def make_reverb_ir(sr: int, decay_seconds: float, room_size: float = 0.8) -> np.
 
 def apply_reverb(audio: np.ndarray, sr: int, wet: float, decay: float) -> np.ndarray:
     """Apply convolution reverb with dry/wet mix."""
+    if wet == 0:
+        return audio
+
     ir = make_reverb_ir(sr, decay_seconds=decay)
 
     if audio.ndim == 2:
@@ -184,7 +187,9 @@ def process_audio(
 
     # ── Step 1: Time stretch (slow down) ──────────────────────────────────
     print(f"\n⏱  Slowing to {speed:.0%} speed …", end=" ", flush=True)
-    if stereo:
+    if speed == 1.0:
+        pass  # Preserve samples and avoid an unnecessary STFT round trip.
+    elif stereo:
         left  = librosa.effects.time_stretch(audio[:, 0], rate=speed)
         right = librosa.effects.time_stretch(audio[:, 1], rate=speed)
         audio = np.stack([left, right], axis=1)
