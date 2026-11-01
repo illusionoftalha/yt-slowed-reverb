@@ -171,3 +171,13 @@ The output will be saved as `Rick Astley - Never Gonna Give You Up_dreamy.wav`.
 
 **Output is clipping / too loud**
 → `slowed_reverb.py` auto-normalizes the peak to 98% to prevent clipping. If it still sounds distorted, lower `--bass`.
+
+### Performance checks
+
+Disabled reverb (`--reverb 0`) skips impulse generation and FFT convolution.
+Unchanged playback speed (`--speed 1`) skips time stretching. Run the numerical
+regression tests after installing the audio dependencies:
+
+```bash
+python -m unittest discover -s tests -v
+```
